@@ -15,7 +15,7 @@ using namespace std;
 
 
 int n;
-long long Left, Right, MIN=1000000000;
+long long Left, Right, MIN=2000000000;
 long long result_L, result_R;
 vector<long long> v;
 
@@ -32,16 +32,11 @@ void solve(){
   Left = 0;
   Right = n-1;
 
-
-  int sum1 = abs(v[Left] + v[Right]);
-  result_L= v[Left] ;
-  result_R = v[Right]; 
-
   
   while(Left < Right){
     int sum = v[Left] + v[Right];
-    if(abs(sum)<sum1){
-        sum1 = abs(sum);
+    if(abs(sum)<MIN){
+          MIN = abs(sum);
       result_L = v[Left];
       result_R = v[Right];
     }
