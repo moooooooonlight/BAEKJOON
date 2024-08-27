@@ -46,7 +46,7 @@ void solve(){
       result_R = v[Right];
     }
     
-    if(sum<0) {
+    if(abs(v[Left]) > abs(v[Right])) {
       Left++;
     }else{
       Right--;
