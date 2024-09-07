@@ -1,41 +1,49 @@
 #include <iostream>
 #include <vector>
-// BOJ - 12015 LIS 2
+#define MAX 1000001
 using namespace std;
 
-vector<int> a, ans;
+int n;
+int arr[MAX];
+vector<int> result;
 
-int idx_bsearch(int k) {
-	int lo = 0, hi = ans.size() - 1, mid;
-
-	while (lo < hi) {
-		mid = lo + (hi - lo) / 2;
-
-		if (ans[mid] >= k) 
-			hi = mid;
-		else lo = mid + 1;
-	}
-
-	return hi;
+void input(){
+  cin>>n;
+  for(int i=0;i<n;i++){
+    cin>>arr[i];
+  }
 }
 
-int main(void) {
-	int n, t, idx;
+int indexSearch(int x){
+  int low = 0, hi = result.size()-1, mid;
+  while(low<hi){
+    mid = (hi+low)/2;
 
-	cin >> n;
-	for (int i = 0; i < n; i++) 
-	{ cin >> t;  a.push_back(t); }
-	ans.push_back(a.front());
+    if(result[mid] >= x){
+      hi = mid;
+    }else{
+      low = mid+1;
+    }
+  }
+  return hi;
+}
 
-	for (int i = 1; i < n; i++) {
-		if (a[i] > ans.back())
-			ans.push_back(a[i]);
-		else {
-			idx = idx_bsearch(a[i]);
-			ans[idx] = a[i];
-		}
-	}
-	cout << ans.size();
+void dp(){
+  result.push_back(arr[0]);
 
-	return 0;
+  for(int i=1;i<n;i++){
+    if(arr[i]>result.back()){
+      result.push_back(arr[i]);
+    }else{
+      int index = indexSearch(arr[i]);
+      result[index] = arr[i];
+    }
+  }
+}
+
+int main(){
+  input();
+  dp();
+  cout<<result.size()<<"\n";
+  return 0;
 }
