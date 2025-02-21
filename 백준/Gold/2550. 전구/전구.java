@@ -1,81 +1,70 @@
+import java.io.*;
 import java.util.*;
- 
+
 public class Main {
- 
-    static int n;
-    static List<Integer> list = new ArrayList<>(); //LIS를 담을 리스트
-    static Node[] node;
- 
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
- 
-        n = scan.nextInt();
-        
-        Map<Integer, Integer> map = new HashMap<>();
-        int[] origin_sw = new int[n];
-        for(int i = 0; i < n; i++) { 
-            int sw = scan.nextInt();
-            origin_sw[i] = sw;
-            map.put(sw, i);
-        } 
- 
-        int[] bulb = new int[n];
-        for(int i = 0; i < n; i++) { 
-            bulb[i] = map.get(scan.nextInt());
-        } 
- 
-        node = new Node[n];
-        for(int i = 0; i < n; i++) { 
-            if(list.size() == 0 || list.get(list.size() - 1) < bulb[i]) {
-                list.add(bulb[i]);
-                node[i] = new Node(bulb[i], list.size() - 1); // sw와 연결된 전구의 LIS위치
+
+    private static BufferedReader br;
+    private static BufferedWriter bw;
+    private static StringTokenizer st;
+    private static HashMap<Integer, Integer> map = new HashMap<>();
+    private static int[] longestLine, startButton, origin, trace;
+    private static int n;
+
+    public static void main(String[] args) throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
+        bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        n = Integer.parseInt(br.readLine());
+
+        longestLine = new int[n + 1];
+        startButton = new int[n + 1];
+        origin = new int[n + 1];
+        trace = new int[n + 1];
+
+        st = new StringTokenizer(br.readLine());
+        for (int i = 1; i <= n; i++) {
+            startButton[i] = Integer.parseInt(st.nextToken());
+            map.put(startButton[i], i);
+        }
+        st = new StringTokenizer(br.readLine());
+        for (int i = 1; i <= n; i++) {
+            origin[i] = map.get(Integer.parseInt(st.nextToken()));
+        }
+
+        // LIS 구하기
+        ArrayList<Integer> lis = new ArrayList<>();
+        Arrays.fill(trace, -1);
+        int[] pos = new int[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            int target = origin[i];
+            int idx = Collections.binarySearch(lis, target);
+            if (idx < 0) idx = -(idx + 1);
+
+            if (idx == lis.size()) {
+                lis.add(target);
             } else {
-                int idx = binarySearch(bulb[i]);
-                list.set(idx, bulb[i]);
-                node[i] = new Node(bulb[i], idx);
+                lis.set(idx, target);
             }
-        } 
- 
-        int idx = list.size() - 1;
-        for(int i = n - 1; i >= 0; i--) {
-            if(node[i].idx == idx) {
-                list.set(idx--, origin_sw[node[i].num]);
-            }
+
+            pos[idx] = i;
+            trace[i] = (idx > 0) ? pos[idx - 1] : -1;
         }
-        System.out.println(list.size());
- 
-        Collections.sort(list);
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < list.size(); i++) {
-            sb.append(list.get(i) + " ");
+
+        bw.write(lis.size() + "\n");
+
+        // LIS 역추적
+        LinkedList<Integer> result = new LinkedList<>();
+        for (int i = pos[lis.size() - 1]; i >= 0; i = trace[i]) {
+            result.addFirst(startButton[origin[i]]);
         }
-        System.out.println(sb.toString());
-    }
- 
-    public static int binarySearch(int num) {
-        int l = 0;
-        int r = list.size() - 1;
-        
-        while(l <= r) {
-            int m = (l + r) / 2;
- 
-            if(list.get(m) < num) {
-                l = m + 1;
-            } else{
-                r = m - 1;
-            }
+        Collections.sort(result);
+
+        for (int val : result) {
+            bw.write(val + " ");
         }
-        return l;
-    }
- 
-    public static class Node {
-        int num;
-        int idx;
- 
-        public Node(int num, int idx) {
-            this.num = num;
-            this.idx = idx;
-        }
+        bw.write("\n");
+
+        bw.flush();
+        bw.close();
     }
 }
-
