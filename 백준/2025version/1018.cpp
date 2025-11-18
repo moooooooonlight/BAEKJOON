@@ -1,6 +1,6 @@
-#include <stdio.h>
 #include <iostream>
 #include <algorithm>
+#include <cstdlib>
 using namespace std;
 
 void input(int &n, int &m,char** board){
@@ -50,9 +50,9 @@ int findMinChanged(int n, int m, char** board){
 int main(){
     int n,m;
     cin>>n>>m;
-    char** board = new char*[n];
+    char** board = (char **)malloc(n * sizeof(char *));
     for(int i=0;i<n;i++){
-        board[i] = new char[m];
+        board[i] = (char *)malloc(m*sizeof(char));
     }
 
     // 현재 체스판 상태 입력 받기
@@ -63,7 +63,9 @@ int main(){
 
     // 동적 할당 제거
     for(int i=0; i<n; i++){
-        delete[] board[i];
+        free(board[i]);
     }
-    delete[] board;
+    free(board);
+
+    return 0;
 }
